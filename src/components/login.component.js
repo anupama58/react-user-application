@@ -1,22 +1,29 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router-dom';
+import api from '../utils/axiosHelper';
+
 class Login extends Component {
     constructor(){
         super()
         this.state={
             isRegister:false
-        }        
+        };
+        this.api = api;
     }
 
     login(){
         console.log("state",this.state);
-        fetch('http://localhost:3000/user/login',{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json",
-            },
-            body:JSON.stringify(this.state)
-        }).then((result)=>{
+        api.post('', {
+            query: `
+            query ExampleQuery {
+                greetUser(name: "raj") {
+                  message
+                  statusCode
+                }
+            }
+              `
+          }).then((result) => {
+            console.log(result.data);
             result.json().then((resp)=>{
                 this.setState({
                     isRegister:true,
@@ -35,8 +42,37 @@ class Login extends Component {
                 }
                
             })
-        })
+          });
     }
+    // login(){
+    //     console.log("state",this.state);
+    //     fetch('http://localhost:3000/user/login',{
+    //         method:"POST",
+    //         headers:{
+    //             "Content-Type":"application/json",
+    //         },
+    //         body:JSON.stringify(this.state)
+    //     }).then((result)=>{
+    //         result.json().then((resp)=>{
+    //             this.setState({
+    //                 isRegister:true,
+    //             });
+    //             localStorage.setItem("auth",JSON.stringify(resp.success.token));
+    //             if(resp.success.token){
+    //                 const base64Url = resp.success.token.split('.')[1];
+    //                 const base64 = base64Url.replace('-','+').replace('-','/');
+    //                 const tokenData =JSON.parse(window.atob(base64))
+    //                 const userId =tokenData.userId;  
+    //                 console.log(userId);                  
+    //                 this.props.history.push({
+    //                     pathname: '/home',
+    //                     state:{userId:userId}
+    //                 });
+    //             }
+               
+    //         })
+    //     })
+    // }
 
     isDisabled(){
         if(this.state.username && this.state.username!=''){
