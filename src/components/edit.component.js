@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import api from '../utils/axiosHelper';
 
 class Edit extends Component {
     constructor(props){
@@ -13,20 +14,43 @@ class Edit extends Component {
 
     componentDidMount(){
         const userId = this.props.match.params.id;//another way of fetching id 
-        fetch('http://localhost:3000/user/'+userId+'/edit',{
-            method:"GET",
-            headers:{
-                "Content-Type":"application/json",
-            },
-        })
-        .then(res=>res.json())
-        .then(result => {
-            this.setState({
-                isloaded:true,
-                items:result
-            });
-        });
-       
+        // fetch('http://localhost:3000/user/'+userId+'/edit',{
+        //     method:"GET",
+        //     headers:{
+        //         "Content-Type":"application/json",
+        //     },
+        // })
+        // .then(res=>res.json())
+        // .then(result => {
+        //     this.setState({
+        //         isloaded:true,
+        //         items:result
+        //     });
+        // });
+        
+
+        // api.post('', {
+        //     query: `
+        //     query editUserDetails {
+        //         user(id:${userId}){
+        //             id,
+        //             firstName,
+        //             lastName,
+        //             userName,
+        //             emailId,
+        //             mobileNo
+
+
+        //         }
+        //     }`
+        //     .then(res=>res.json())
+        //     .then(result => {
+        //         this.setState({
+        //             isloaded:true,
+        //             items:result
+        //         });
+        //     })
+        // })        
     }
 
     update(){

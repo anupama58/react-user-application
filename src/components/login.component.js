@@ -11,38 +11,44 @@ class Login extends Component {
         this.api = api;
     }
 
-    login(){
+    /**
+     * @summary 
+     */
+    async login() {
         console.log("state",this.state);
-        api.post('', {
+        const { username, password } = this.state;
+        const userLoginResponse = await api.post('', {
             query: `
-            query ExampleQuery {
-                greetUser(name: "raj") {
-                  message
-                  statusCode
-                }
+                mutation userLogin($username:String!,$password:String!){
+                    userLogin(username:$username,password:$password){
+                        message,
+                        token,
+                        code
+                    }
+                }`,
+            variables:{
+                username:username,
+                password:password
             }
-              `
-          }).then((result) => {
-            console.log(result.data);
-            result.json().then((resp)=>{
-                this.setState({
-                    isRegister:true,
-                });
-                localStorage.setItem("auth",JSON.stringify(resp.success.token));
-                if(resp.success.token){
-                    const base64Url = resp.success.token.split('.')[1];
-                    const base64 = base64Url.replace('-','+').replace('-','/');
-                    const tokenData =JSON.parse(window.atob(base64))
-                    const userId =tokenData.userId;  
-                    console.log(userId);                  
-                    this.props.history.push({
-                        pathname: '/home',
-                        state:{userId:userId}
-                    });
-                }
-               
-            })
-          });
+        });
+
+        const { message, token, code  } = userLoginResponse.userLogin;
+        this.setState({
+            isRegister: code === 200 ? true : false,
+        });
+
+        if(this.state.isRegister && token){
+            localStorage.setItem("auth",JSON.stringify(token));
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace('-','+').replace('-','/');
+            const tokenData =JSON.parse(window.atob(base64))
+            const userId =tokenData.userId;  
+            console.log(userId);                  
+            this.props.history.push({
+                pathname: '/home',
+                state:{userId:userId}
+            });
+        }
     }
     // login(){
     //     console.log("state",this.state);
