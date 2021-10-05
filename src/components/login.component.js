@@ -25,7 +25,7 @@ class Login extends Component {
                         token,
                         code
                     }
-                }`,
+                }`, 
             variables:{
                 username:username,
                 password:password

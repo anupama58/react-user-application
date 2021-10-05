@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
 import { Link } from 'react-router-dom';
+import api from '../utils/axiosHelper';
 
 class Home extends Component{
     constructor(props){
@@ -11,22 +12,49 @@ class Home extends Component{
         }
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         const userId = this.props.location.state.userId
-        console.log(userId);
-        fetch('http://localhost:3000/user/'+userId+'/edit',{
-            method:"GET",
-            headers:{
-                "Content-Type":"application/json",
-            },
-        })
-        .then(res=>res.json())
-        .then(result => {
-            this.setState({
-                isloaded:true,
-                items:result
-            });
+        const singleUserResponse = await api.post('', {
+            query: `
+                query user($id:Int!){
+                    user(id:$id){
+                        id,
+                        firstName,
+                        lastName,
+                        userName,
+                        emailId,
+                        mobileNo
+                    }
+                }`,
+            variables:{
+                id:userId,
+            }
         });
+        const {                         
+            id,
+            firstName,
+            lastName,
+            userName,
+            emailId,
+            mobileNo  } = singleUserResponse.user;
+            this.setState({
+                        isloaded:true,
+                        items:singleUserResponse.user
+                    });
+        // console.log(userId);
+        // fetch('http://localhost:3000/user/'+userId+'/edit',{
+        //     method:"GET",
+        //     headers:{
+        //         "Content-Type":"application/json",
+        //     },
+        // })
+        // .then(res=>res.json())
+        // .then(result => {
+        //     this.setState({
+        //         isloaded:true,
+        //         items:result
+        //     });
+        // });
 
     }
     render(){
@@ -48,7 +76,7 @@ class Home extends Component{
                 </ul>
                 <Link to={items.id+"/edit"}>
                 <button className="btn btn-primary btn-block">Edit</button></Link>
-                </div>
+                </div> 
                 
             )
        }
